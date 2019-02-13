@@ -1,42 +1,122 @@
 <template>
-    <div id="add_product">
-        name:<br>
-        <input class="table-div" id="name_input" v-model="name_input" type="text" placeholder="name"/><br>
-        number:<br>
-        <input class="table-div" id="number_input" v-model="number_input" type="text" placeholder="number"/><br>
-        price:<br>
-        <input class="table-div" id="price_input" v-model="price_input" type="text"/><br>
-        entrepost_id:<br>
-        <input class="table-div" id="entrepot_id_input" v-model="entrepot_id_input" type="text"/><br>
-        <button id="ajax_button" v-on:click="axios_post">Submit</button><br>
-    </div>
+    <v-app id="add_product">
+        <img alt="Vue logo" src="../assets/logo.png">
+
+        <v-form >
+            <v-container grid-list-md text-xs-center>
+                <v-layout row justify-center>
+                    <v-flex xs4>
+                        <v-text-field v-model="email"
+                                      :error-messages="UtlisateurErrors"
+                                      label="Email"
+                                      required
+                                      @input="$v.email.$touch()"
+                                      @blur="$v.email.$touch()"></v-text-field>
+                    </v-flex>
+                </v-layout >
+                <v-layout row justify-center>
+                    <v-flex xs4>
+                        <v-text-field v-model="motdepasse"
+                                      type="password"
+                                      :error-messages="MotdepasseErrors"
+                                      label="Mot de passe"
+                                      required
+                                      @input="$v.motdepasse.$touch()"
+                                      @blur="$v.motdepasse.$touch()"></v-text-field>
+                    </v-flex>
+                </v-layout>
+                <v-btn @click="login" >submit</v-btn>
+                <v-btn @click="clear">clear</v-btn>
+            </v-container>
+
+        </v-form>
+
+        <router-link to="inscription">link</router-link>
+    </v-app>
 </template>
 
 <script>
+    import  Vue from "vue";
+    import axios from 'axios';
+    import { validationMixin } from 'vuelidate'
+    import { required} from 'vuelidate/lib/validators'
+    import Vuex from "vuex";
+    Vue.use(Vuex)
+
+
     export default {
+        mixins: [validationMixin],
+
+        validations: {
+            email: { required},
+            motdepasse: { required}
+
+
+        },
         name: "Login",
         data: function(){
             return{
-                info:null,
-                name_input:null,
-                number_input:null,
-                price_input:null,
-                entrepot_id_input:null
+                email:'',
+                motdepasse:'',
+                users:[],
             }
         },
-        methods:{
-            axios_post:function() {
-                axios.post("http://localhost:8090/rest/products", {
-                    name: this.name_input,
-                    number: this.number_input,
-                    price: this.price_input,
-                    entrepotId: this.entrepot_id_input
+        methods: {
+            clear() {
+                this.$v.$reset()
+                this.email = ''
+                this.motdepasse = ''
+            },
+            login() {
+                this.$v.$touch()
+                const {email, motdepasse} = this
+                this.loginRoutine(email,motdepasse).then(() => {
+                    this.$router.push('/home')
                 })
-                    .then(function (response) {
-                        alert(response.status)
+            },
+            loginRoutine(email, motdepasse) {
+                return new Promise((resolve, reject) => {
+                    axios.post("http://localhost:8090/jersey/authen",
+                        {
+                            email: email,
+                            motdepasse: motdepasse
+                        }).then(response => {
+                        const res = response.data
+                        if(res==true){
+                            this.saveToken(email)
+                            resolve(response)
+                        }
+                        else{
+                            localStorage.removeItem("user-token")
+                        }
+                    }).catch(err => {
+                        reject(err)
                     })
-                    .catch(function (error) {
-                    });
+                })
+            },
+
+            saveToken(email){
+                axios.post("http://localhost:8090/jersey/token/jwt",
+                    {
+                        userName:email,
+                        role:"candidature"
+                    }).then(response => {
+                        localStorage.setItem("user-token",response.data)
+                })
+            }
+        },
+        computed:{
+            UtlisateurErrors(){
+                const errors = []
+                if(!this.$v.email.$dirty) return errors
+                !this.$v.email.required && errors.push("Utilisateur manquant")
+                return errors
+            },
+            MotdepasseErrors(){
+                const errors = []
+                if(!this.$v.motdepasse.$dirty) return errors
+                !this.$v.motdepasse.required && errors.push("Mot de passe manquant")
+                return errors
             }
         }
     }
@@ -44,4 +124,8 @@
 
 <style scoped>
 
+    img{
+        margin: 60px auto 40px;
+        width: 40%;
+    }
 </style>

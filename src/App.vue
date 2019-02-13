@@ -1,8 +1,10 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
+    <div>
+      <router-view></router-view>
+    </div>
     <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
-    <router-view></router-view>
+
 
   </div>
 </template>
@@ -12,6 +14,8 @@ import HelloWorld from './components/HelloWorld.vue'
 import Home from "./components/Home";
 import User from "./components/User";
 import Login from "./components/Login";
+import Inscription from "./components/Inscription";
+
 
 export default {
   name: 'app',
@@ -19,21 +23,24 @@ export default {
     HelloWorld,
     Home,
     User,
-    Login
+    Login,
+    Inscription,
   },
   methods:{
 
+  },
+  data () {
+    return {
+      tab: null,
+      items: [
+        'web', 'shopping', 'videos', 'images', 'news'
+      ],
+      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+    }
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>

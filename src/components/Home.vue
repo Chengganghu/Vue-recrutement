@@ -1,13 +1,19 @@
 <template>
     <div>
         i am home
-        <v-btn to="users">touser</v-btn>
+        <v-btn @click="logout">touser</v-btn>
     </div>
 </template>
 
 <script>
     export default {
-        name: "Home"
+        name: "Home",
+        methods:{
+            logout(){
+                localStorage.removeItem('user-token')
+                this.$router.push('/')
+            }
+        }
     }
 </script>
 
