@@ -79,17 +79,16 @@
                                                 ></v-textarea>
                                             </v-flex>
                                         </v-layout>
-                                        <v-layout v-for="n in numberBonneOption" >
+                                        <v-layout v-for="(item,index) in bonneOptionsTags" >
                                             <v-flex xs6>
                                                 <v-text-field
                                                         clearable
                                                         label= "Bonne Option"
                                                 >
-
                                                 </v-text-field>
                                             </v-flex>
                                             <v-flex>
-                                                <v-btn icon @click="removeBonneOption">
+                                                <v-btn icon @click="removeBonneOption(index)">
                                                     <v-icon>mdi-close-box</v-icon>
                                                 </v-btn>
                                             </v-flex>
@@ -149,8 +148,12 @@
                     'Questions Uniques', 'Questions Multiples', 'Questions Ouvertes'
                 ],
                 type:null,
-                numberBonneOption:1,
-                numberMauvaisOption:1
+                bonneOptionsId:0,
+                mauvaisOptionsId:0,
+                bonneOptions:[],
+                mauvaisOptions:[],
+                bonneOptionsTags:[],
+                mauvaisOptionsTags:[]
             }
         },
         methods:{
@@ -158,10 +161,10 @@
                 this.type = a
             },
             addBonneOption(){
-                this.numberBonneOption++
+                this.bonneOptionsTags.push({id:"bonne option "+this.bonneOptionsId++})
             },
-            removeBonneOption(){
-                this.$emit('remove',true)
+            removeBonneOption(index){
+                this.bonneOptionsTags.splice(index,1)
             }
         },
         computed:{
