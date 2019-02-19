@@ -1,18 +1,19 @@
 import Vue from 'vue'
 import App from './App.vue'
-import VueRouter from 'vue-router'
-import User from "./components/User";
 import Home from "./components/Home";
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min'
 import 'vuetify/dist/vuetify.min.css'
 import Login from "./components/Login";
-import Joblist from "./components/Joblist";
 import Inscription from "./components/Inscription";
 import '@mdi/font/css/materialdesignicons.css'
 import Vuex from "vuex";
-import store from "@vue/cli-service/generator/vuex/template/src/store";
-import test from "./components/test";
+import VueRouter from "vue-router";
+import AddQuestion from "./components/AddQuestion";
+import Quizze from "./components/Quizze";
+import UniqueQuestion from "./components/question/UniqueQuestion";
+import MultipleQuestion from "./components/question/MultipleQuestion";
+import OuverteQuestion from "./components/question/OuverteQuestion";
 
 Vue.config.productionTip = false
 
@@ -23,13 +24,16 @@ Vue.use(Vuetify, {
     iconfont: 'mdi',
 })
 const routes = [
-    {path: '/users', component: User},
     {path: '/home', component:Home},
     {path: '/' , component:Login},
-    {path: '/jobs',component:Joblist},
     {path: '/inscription',component:Inscription},
-    {path: '/test',component:test},
-
+    {path: '/addquestion', component:AddQuestion},
+    {path: '/quizze', component: Quizze, children:[
+            {path: 'unique',component: UniqueQuestion},
+            {path: 'multiple',component:MultipleQuestion},
+            {path: 'ouverte',component:OuverteQuestion}
+        ]
+    },
     {path: '*', redirect:'/'}
 ];
 
@@ -39,8 +43,6 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to,from,next)=>{
-    console.log(to)
-    console.log(to.fullPath=="/inscription")
     if(to.fullPath == "/inscription"){
         return next();
     }

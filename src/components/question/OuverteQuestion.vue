@@ -1,10 +1,12 @@
 <template>
-    
+    <div>
+        i am ouverte
+    </div>
 </template>
 
 <script>
     export default {
-        name: "Joblist"
+        name: "OuverteQuestion"
     }
 </script>
 

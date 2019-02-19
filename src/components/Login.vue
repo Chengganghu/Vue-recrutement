@@ -10,28 +10,40 @@
                                       :error-messages="UtlisateurErrors"
                                       label="Email"
                                       required
+                                      prepend-icon="mail"
                                       @input="$v.email.$touch()"
                                       @blur="$v.email.$touch()"></v-text-field>
                     </v-flex>
                 </v-layout >
                 <v-layout row justify-center>
                     <v-flex xs4>
+
                         <v-text-field v-model="motdepasse"
                                       type="password"
                                       :error-messages="MotdepasseErrors"
                                       label="Mot de passe"
                                       required
+                                      prepend-icon="lock"
                                       @input="$v.motdepasse.$touch()"
                                       @blur="$v.motdepasse.$touch()"></v-text-field>
+                    </v-flex>
+                </v-layout>
+                <a href="inscription">"J'ai pas encore un compte"</a>
+                <v-layout row justify-center>
+                    <v-flex xs4>
+                        <v-alert
+                                :value="alert"
+                                type="error"
+                                transition="scale-transition"
+                        >
+                            mot de passe pas bon ou pas de compte
+                        </v-alert>
                     </v-flex>
                 </v-layout>
                 <v-btn @click="login" >submit</v-btn>
                 <v-btn @click="clear">clear</v-btn>
             </v-container>
-
         </v-form>
-
-        <router-link to="inscription">link</router-link>
     </v-app>
 </template>
 
@@ -59,6 +71,7 @@
                 email:'',
                 motdepasse:'',
                 users:[],
+                alert: false
             }
         },
         methods: {
@@ -66,12 +79,15 @@
                 this.$v.$reset()
                 this.email = ''
                 this.motdepasse = ''
+                this.alert = false
             },
             login() {
                 this.$v.$touch()
                 const {email, motdepasse} = this
                 this.loginRoutine(email,motdepasse).then(() => {
                     this.$router.push('/home')
+                }).catch(()=>{
+                    alert("mot de passe pas bon ou pas de compte")
                 })
             },
             loginRoutine(email, motdepasse) {
@@ -82,12 +98,15 @@
                             motdepasse: motdepasse
                         }).then(response => {
                         const res = response.data
-                        if(res==true){
+                        if(res!=""){
                             this.saveToken(email)
+                            localStorage.setItem("user",JSON.stringify(res))
                             resolve(response)
                         }
                         else{
                             localStorage.removeItem("user-token")
+                            localStorage.removeItem("user")
+                            this.alert = true
                         }
                     }).catch(err => {
                         reject(err)
@@ -103,6 +122,10 @@
                     }).then(response => {
                         localStorage.setItem("user-token",response.data)
                 })
+            },
+
+            getUser(){
+
             }
         },
         computed:{
@@ -126,6 +149,6 @@
 
     img{
         margin: 60px auto 40px;
-        width: 40%;
+        width: 30%;
     }
 </style>
