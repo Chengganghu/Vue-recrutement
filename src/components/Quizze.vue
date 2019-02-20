@@ -43,13 +43,13 @@
                         :value="'mobile-tabs-5-1'"
                 >
                     <v-container>
-                        <v-layout >
-                            <v-flex xs12>
-                                <v-card >
+                        <v-layout>
+                            <v-flex xs8 offset-xs2>
+                                <v-card>
                                     <v-card-title  class="font-weight-light font-italic display-2" >Ajouter une question</v-card-title>
                                     <v-container fluid>
                                         <v-layout row wrap align-center>
-                                            <v-flex xs4 >
+                                            <v-flex xs6 >
                                                 <v-select
                                                         :items="states"
                                                         menu-props="auto"
@@ -61,52 +61,127 @@
                                         </v-layout>
                                         <v-layout>
                                             <v-flex xs6>
+                                                <v-combobox
+                                                        prepend-icon="build"
+                                                        v-model="select"
+                                                        :items="items"
+                                                        label="Choisir le tag pour cette question"
+                                                        multiple
+                                                        chips
+                                                >
+                                                    <template
+                                                            slot="selection"
+                                                            slot-scope="data"
+                                                    >
+                                                        <v-chip
+                                                                :key="JSON.stringify(data.item)"
+                                                                :selected="data.selected"
+                                                                :disabled="data.disabled"
+                                                                class="v-chip--select-multi"
+                                                                @input="data.parent.selectItem(data.item)"
+                                                        >
+                                                            <v-avatar
+                                                                    class="accent white--text"
+                                                                    v-text="data.item.slice(0, 1).toUpperCase()"
+                                                            ></v-avatar>
+                                                            {{ data.item }}
+                                                        </v-chip>
+                                                    </template>
+                                                </v-combobox>
+                                            </v-flex>
+                                        </v-layout>
+                                        <v-layout>
+                                            <v-flex xs10>
                                                 <v-textarea
                                                         name="description"
                                                         box
                                                         label="Description de la Question"
                                                         auto-grow
+                                                        clearable
                                                 ></v-textarea>
                                             </v-flex>
                                         </v-layout>
                                         <v-layout v-if="isOuverte">
-                                            <v-flex xs6>
+                                            <v-flex xs10>
                                                 <v-textarea
                                                         name="reponse"
                                                         box
                                                         label="Réponse standard"
                                                         auto-grow
+                                                        clearable
                                                 ></v-textarea>
                                             </v-flex>
                                         </v-layout>
-                                        <v-layout v-for="(item,index) in bonneOptionsTags" >
-                                            <v-flex xs6>
+                                    </v-container >
+                                    <v-container v-if="isUnique">
+                                        <v-layout >
+                                            <v-flex xs10>
                                                 <v-text-field
                                                         clearable
                                                         label= "Bonne Option"
                                                 >
                                                 </v-text-field>
                                             </v-flex>
-                                            <v-flex>
-                                                <v-btn icon @click="removeBonneOption(index)">
-                                                    <v-icon>mdi-close-box</v-icon>
-                                                </v-btn>
-                                            </v-flex>
                                         </v-layout>
                                         <v-layout>
-                                            <v-flex >
-                                                <v-btn @click="addBonneOption">add une bonne option</v-btn>
+                                            <v-flex xs2>
+                                                <v-btn @click="mauvaisOptionsNumber++" flat color="blue darken-3">add </v-btn>
+                                            </v-flex>
+                                            <v-flex offest-xs1>
+                                                <v-btn @click="removeMauvais" flat color="blue darken-3">remove</v-btn>
                                             </v-flex>
                                         </v-layout>
-                                        <v-layout>
-                                            <v-flex xs5>
+                                        <v-layout v-for="n in mauvaisOptionsNumber" >
+                                            <v-flex xs10>
                                                 <v-text-field
                                                         clearable
-                                                        label="Mauvais option"
+                                                        label= "Mauvais Option"
                                                 >
-
                                                 </v-text-field>
                                             </v-flex>
+                                        </v-layout>
+                                    </v-container>
+                                    <v-container v-if="isMultiple">
+                                        <v-layout >
+                                            <v-flex xs2>
+                                                <v-btn @click="bonneOptionsNumber++" flat color="blue darken-3">add </v-btn>
+                                            </v-flex>
+                                            <v-flex offest-xs1>
+                                                <v-btn @click="removeBonne" flat color="blue darken-3">remove </v-btn>
+                                            </v-flex>
+                                        </v-layout>
+                                        <v-layout v-for="n in bonneOptionsNumber" >
+                                            <v-flex xs10>
+                                                <v-text-field
+                                                        clearable
+                                                        label= "Bonne Option"
+                                                >
+                                                </v-text-field>
+                                            </v-flex>
+                                        </v-layout>
+                                        <v-layout>
+                                            <v-flex xs2>
+                                                <v-btn @click="mauvaisOptionsNumber++" flat color="blue darken-3">add </v-btn>
+                                            </v-flex>
+                                            <v-flex offest-xs1>
+                                                <v-btn @click="removeMauvais" flat color="blue darken-3">remove </v-btn>
+                                            </v-flex>
+                                        </v-layout>
+                                        <v-layout v-for="n in mauvaisOptionsNumber" >
+                                            <v-flex xs10>
+                                                <v-text-field
+                                                        clearable
+                                                        label= "Mauvais Option"
+                                                >
+                                                </v-text-field>
+                                            </v-flex>
+                                        </v-layout>
+                                    </v-container>
+                                    <v-container>
+                                        <v-layout>
+                                            <v-btn>
+                                                submit
+                                            </v-btn>
                                         </v-layout>
                                     </v-container>
                                 </v-card>
@@ -147,25 +222,38 @@
                 states: [
                     'Questions Uniques', 'Questions Multiples', 'Questions Ouvertes'
                 ],
-                type:null,
-                bonneOptionsId:0,
-                mauvaisOptionsId:0,
+                type:'Questions Ouvertes',
+                bonneOptionsNumber:1,
+                mauvaisOptionsNumber:1,
                 bonneOptions:[],
                 mauvaisOptions:[],
-                bonneOptionsTags:[],
-                mauvaisOptionsTags:[]
+                select: ['Spring', 'Vue'],
+                items: [
+                    'Spring',
+                    'Vue',
+                    'Angular',
+                    'Linux'
+                ]
             }
         },
         methods:{
             logger(a){
                 this.type = a
+                this.bonneOptionsNumber = 1
+                this.mauvaisOptionsNumber = 1
             },
-            addBonneOption(){
-                this.bonneOptionsTags.push({id:"bonne option "+this.bonneOptionsId++})
+            removeBonne(){
+                if(this.bonneOptionsNumber <=1)
+                    alert("Au monis d'une ")
+                else
+                    this.bonneOptionsNumber--
             },
-            removeBonneOption(index){
-                this.bonneOptionsTags.splice(index,1)
+            removeMauvais(){
+                if(this.mauvaisOptionsNumber <=1)
+                    alert("Au moins d'une")
+                else this.mauvaisOptionsNumber--
             }
+
         },
         computed:{
             isUnique(){
@@ -176,7 +264,8 @@
             },
             isOuverte(){
                 return this.type == 'Questions Ouvertes'
-            }
+            },
+
         }
     }
 </script>

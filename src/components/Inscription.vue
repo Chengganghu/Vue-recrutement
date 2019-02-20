@@ -1,213 +1,225 @@
 <template>
     <v-app>
-        <v-toolbar>
-            <v-icon>mdi-account</v-icon>
-            <v-toolbar-title> User profile</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn
-                    @click="editInfo"
-                    color="blue lighten-1"
-                    fab
-                    small
-            >
-                <v-icon v-if="isEditingInfo">mdi-close</v-icon>
-                <v-icon v-else>mdi-pencil</v-icon>
-            </v-btn>
-        </v-toolbar>
-        <v-form>
-            <v-container grid-list-md text-xs-center>
-                <v-layout row wrap>
-                    <v-flex xs5 offset-xs1>
-                        <v-text-field :disabled="!isEditingInfo"
-                                      :error-messages="PrenomError"
-                                      @blur="$v.prenom.$touch()"
-                                      @input="$v.prenom.$touch()"
-                                      color="blue"
-                                      label="Prenom"
-                                      required
-                                      v-model="prenom"></v-text-field>
-
-                    </v-flex>
-                    <v-flex xs5>
-                        <v-text-field :disabled="!isEditingInfo"
-                                      :error-messages="NomErrors"
-                                      @blur="$v.nom.$touch()"
-                                      @input="$v.nom.$touch()"
-                                      color="blue"
-                                      label="Nom"
-                                      required
-                                      v-model="nom"></v-text-field>
-                    </v-flex>
-                    <v-flex xs5 offset-xs1>
-                        <v-text-field :disabled="!isEditingInfo"
-                                      :error-messages="EmailErrors"
-                                      @blur="$v.email.$touch()"
-                                      @input="$v.email.$touch()"
-                                      color="blue"
-                                      label="E-mail"
-                                      required
-                                      v-model="email"></v-text-field>
-                    </v-flex>
-                    <v-flex xs5>
-                        <v-text-field :disabled="!isEditingInfo"
-                                      :error-messages="NumportableErrors"
-                                      @blur="$v.numportable.$touch()"
-                                      @input="$v.numportable.$touch()"
-                                      color="blue"
-                                      label="Numéro portable"
-                                      required
-                                      v-model="numportable"></v-text-field>
-                    </v-flex>
-                    <v-flex xs5 offset-xs1>
-                        <v-menu
-                                ref="menu"
-                                :close-on-content-click="false"
-                                v-model="menu"
-                                :nudge-right="40"
-                                lazy
-                                transition="scale-transition"
-                                offset-y
-                                full-width
-                                min-width="290px"
-                        >
-                            <v-text-field
-                                    slot="activator"
-                                    v-model="naissance"
-                                    label="Date de naissance"
-                                    prepend-icon="event"
-                                    readonly
-                                    :disabled="!isEditingInfo"
-                            ></v-text-field>
-                            <v-date-picker
-                                    ref="picker"
-                                    v-model="naissance"
-                                    :max="new Date().toISOString().substr(0, 10)"
-                                    min="1950-01-01"
-                                    @change="saveDate"
-                                    :disabled="!isEditingInfo"
-                            ></v-date-picker>
-                        </v-menu>
-                    </v-flex>
-                    <v-flex xs5>
-                        <v-text-field :append-icon="show1 ? 'visibility_off' : 'visibility'"
-                                      :disabled="!isEditingInfo"
-                                      :error-messages="MotdepasseErrors"
-                                      :type="show1 ? 'text':'password'"
-                                      @blur="$v.motdepasse.$touch()"
-                                      @click:append="show1=!show1"
-                                      @input="$v.motdepasse.$touch()"
-                                      color="blue"
-                                      label="Mot de passe"
-                                      required
-                                      v-model="motdepasse"></v-text-field>
-                    </v-flex>
-                    <v-flex xs5 offset-xs1>
-                        <v-text-field :append-icon="show2 ? 'visibility_off' : 'visibility'"
-                                      :disabled="!isEditingInfo"
-                                      :error-messages="ConfirmationErrors"
-                                      :type="show2 ? 'text':'password'"
-                                      @blur="$v.confirmation.$touch()"
-                                      @click:append="show2=!show2"
-                                      @input="$v.confirmation.$touch()"
-                                      color="blue"
-                                      label="Confirmation de mot de passe"
-                                      required
-                                      v-model="confirmation"></v-text-field>
-                    </v-flex>
-
-                </v-layout>
-                <v-btn
-                        :disabled="!isEditingInfo"
-                        @click="saveInfo"
-                        color="success"
-                >
-                    Save
-                </v-btn>
-            </v-container>
-        </v-form>
-        <v-toolbar>
-            <v-icon>mdi-language-html5</v-icon>
-            <v-toolbar-title> Compétence</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn
-                    @click="editCpt"
-                    color="blue lighten-1"
-                    fab
-                    small
-            >
-                <v-icon v-if="isEditingCpt">mdi-close</v-icon>
-                <v-icon v-else>mdi-pencil</v-icon>
-            </v-btn>
-        </v-toolbar>
-        <v-container grid-list-md text-xs-center>
-            <v-layout wrap>
-                <v-flex xs10 offset-xs1>
-                    <v-combobox
-                            :disabled="!isEditingCpt"
-                            :items="items"
-                            chips
-                            label="Choisir votre compétences"
-                            multiple
-                            v-model="select"
-                    >
-                        <template
-                                slot="selection"
-                                slot-scope="data"
-                        >
-                            <v-chip
-
-                                    :disabled="data.disabled"
-                                    :key="JSON.stringify(data.item)"
-                                    :selected="data.selected"
-                                    @blur="$v.naissance.$touch()"
-                                    @input="data.parent.selectItem(data.item)"
-                                    class="v-chip--select-multi"
-                                    required
-                                    :error-messages="NaissanceErrors"
+        <v-container>
+            <v-layout >
+                <v-flex xs8 offset-xs2>
+                    <v-card>
+                        <v-toolbar>
+                            <v-icon>mdi-account</v-icon>
+                            <v-toolbar-title> User profile</v-toolbar-title>
+                            <v-spacer></v-spacer>
+                            <v-btn
+                                    @click="editInfo"
+                                    color="blue lighten-1"
+                                    fab
+                                    small
                             >
-                                <v-avatar
-                                        class="accent white--text"
-                                        v-text="data.item.slice(0, 1).toUpperCase()"
-                                ></v-avatar>
-                                {{ data.item }}
-                            </v-chip>
-                        </template>
-                    </v-combobox>
-                </v-flex>
-            </v-layout>
-            <v-btn
-                    :disabled="!isEditingCpt"
-                    @click="saveCpt"
-                    color="success"
-            >
-                Save
-            </v-btn>
-        </v-container>
-        <v-toolbar>
-            <v-icon>mdi-file-document</v-icon>
-            <v-toolbar-title> CV et Lettre de Motivation</v-toolbar-title>
+                                <v-icon v-if="isEditingInfo">mdi-close</v-icon>
+                                <v-icon v-else>mdi-pencil</v-icon>
+                            </v-btn>
+                        </v-toolbar>
+                        <v-form>
+                            <v-container grid-list-md text-xs-center>
+                                <v-layout row wrap>
+                                    <v-flex xs5 offset-xs1>
+                                        <v-text-field :disabled="!isEditingInfo"
+                                                      :error-messages="PrenomError"
+                                                      @blur="$v.prenom.$touch()"
+                                                      @input="$v.prenom.$touch()"
+                                                      color="blue"
+                                                      label="Prenom"
+                                                      required
+                                                      v-model="prenom"></v-text-field>
 
-        </v-toolbar>
-        <v-container grid-list-md text-xs-center>
-            <v-layout wrap>
-                <v-flex>
-                    <label>CV
-                        <input id="cv" ref="cvfile" type="file" v-on:change="handleCVUpload()"/>
-                    </label>
-                </v-flex>
-                <v-flex>
-                    <label>Lettre de Motivation
-                        <input id="lettre" ref="lettrefile" type="file" v-on:change="handleLettreUpload()"/>
-                    </label>
+                                    </v-flex>
+                                    <v-flex xs5>
+                                        <v-text-field :disabled="!isEditingInfo"
+                                                      :error-messages="NomErrors"
+                                                      @blur="$v.nom.$touch()"
+                                                      @input="$v.nom.$touch()"
+                                                      color="blue"
+                                                      label="Nom"
+                                                      required
+                                                      v-model="nom"></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs5 offset-xs1>
+                                        <v-text-field :disabled="!isEditingInfo"
+                                                      :error-messages="EmailErrors"
+                                                      @blur="$v.email.$touch()"
+                                                      @input="$v.email.$touch()"
+                                                      color="blue"
+                                                      label="E-mail"
+                                                      required
+                                                      v-model="email"></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs5>
+                                        <v-text-field :disabled="!isEditingInfo"
+                                                      :error-messages="NumportableErrors"
+                                                      @blur="$v.numportable.$touch()"
+                                                      @input="$v.numportable.$touch()"
+                                                      color="blue"
+                                                      label="Numéro portable"
+                                                      required
+                                                      v-model="numportable"></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs5 offset-xs1>
+                                        <v-menu
+                                                ref="menu"
+                                                :close-on-content-click="false"
+                                                v-model="menu"
+                                                :nudge-right="40"
+                                                lazy
+                                                transition="scale-transition"
+                                                offset-y
+                                                full-width
+                                                min-width="290px"
+                                        >
+                                            <v-text-field
+                                                    slot="activator"
+                                                    v-model="naissance"
+                                                    label="Date de naissance"
+                                                    prepend-icon="event"
+                                                    readonly
+                                                    :disabled="!isEditingInfo"
+                                            ></v-text-field>
+                                            <v-date-picker
+                                                    ref="picker"
+                                                    v-model="naissance"
+                                                    :max="new Date().toISOString().substr(0, 10)"
+                                                    min="1950-01-01"
+                                                    @change="saveDate"
+                                                    :disabled="!isEditingInfo"
+                                            ></v-date-picker>
+                                        </v-menu>
+                                    </v-flex>
+                                    <v-flex xs5>
+                                        <v-text-field :append-icon="show1 ? 'visibility_off' : 'visibility'"
+                                                      :disabled="!isEditingInfo"
+                                                      :error-messages="MotdepasseErrors"
+                                                      :type="show1 ? 'text':'password'"
+                                                      @blur="$v.motdepasse.$touch()"
+                                                      @click:append="show1=!show1"
+                                                      @input="$v.motdepasse.$touch()"
+                                                      color="blue"
+                                                      label="Mot de passe"
+                                                      required
+                                                      v-model="motdepasse"></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs5 offset-xs1>
+                                        <v-text-field :append-icon="show2 ? 'visibility_off' : 'visibility'"
+                                                      :disabled="!isEditingInfo"
+                                                      :error-messages="ConfirmationErrors"
+                                                      :type="show2 ? 'text':'password'"
+                                                      @blur="$v.confirmation.$touch()"
+                                                      @click:append="show2=!show2"
+                                                      @input="$v.confirmation.$touch()"
+                                                      color="blue"
+                                                      label="Confirmation de mot de passe"
+                                                      required
+                                                      v-model="confirmation"></v-text-field>
+                                    </v-flex>
+
+                                </v-layout>
+                                <v-btn
+                                        :disabled="!isEditingInfo"
+                                        @click="saveInfo"
+                                        flat
+                                        color="blue darken-3"
+                                >
+                                    Save
+                                </v-btn>
+                            </v-container>
+                        </v-form>
+                        <v-toolbar>
+                            <v-icon>mdi-language-html5</v-icon>
+                            <v-toolbar-title> Compétence</v-toolbar-title>
+                            <v-spacer></v-spacer>
+                            <v-btn
+                                    @click="editCpt"
+                                    color="blue lighten-1"
+                                    fab
+                                    small
+                            >
+                                <v-icon v-if="isEditingCpt">mdi-close</v-icon>
+                                <v-icon v-else>mdi-pencil</v-icon>
+                            </v-btn>
+                        </v-toolbar>
+                        <v-container grid-list-md text-xs-center>
+                            <v-layout wrap>
+                                <v-flex xs10 offset-xs1>
+                                    <v-combobox
+                                            :disabled="!isEditingCpt"
+                                            :items="items"
+                                            chips
+                                            label="Choisir votre compétences"
+                                            multiple
+                                            v-model="select"
+                                    >
+                                        <template
+                                                slot="selection"
+                                                slot-scope="data"
+                                        >
+                                            <v-chip
+
+                                                    :disabled="data.disabled"
+                                                    :key="JSON.stringify(data.item)"
+                                                    :selected="data.selected"
+                                                    @blur="$v.naissance.$touch()"
+                                                    @input="data.parent.selectItem(data.item)"
+                                                    class="v-chip--select-multi"
+                                                    required
+                                                    :error-messages="NaissanceErrors"
+                                            >
+                                                <v-avatar
+                                                        class="accent white--text"
+                                                        v-text="data.item.slice(0, 1).toUpperCase()"
+                                                ></v-avatar>
+                                                {{ data.item }}
+                                            </v-chip>
+                                        </template>
+                                    </v-combobox>
+                                </v-flex>
+                            </v-layout>
+                            <v-btn
+                                    :disabled="!isEditingCpt"
+                                    @click="saveCpt"
+                                    flat
+                                    color="blue darken-3"
+                            >
+                                Save
+                            </v-btn>
+                        </v-container>
+                        <v-toolbar>
+                            <v-icon>mdi-file-document</v-icon>
+                            <v-toolbar-title> CV et Lettre de Motivation</v-toolbar-title>
+
+                        </v-toolbar>
+                        <v-container grid-list-md text-xs-center>
+                            <v-layout wrap>
+                                <v-flex>
+                                    <label>CV
+                                        <input id="cv" ref="cvfile" type="file" v-on:change="handleCVUpload()"/>
+                                    </label>
+                                </v-flex>
+                                <v-flex>
+                                    <label>Lettre de Motivation
+                                        <input id="lettre" ref="lettrefile" type="file" v-on:change="handleLettreUpload()"/>
+                                    </label>
+                                </v-flex>
+                            </v-layout>
+                            <v-btn
+                                    @click="submitFile"
+                                    flat
+                                    color="blue darken-3"
+                            >
+                                Submit
+                            </v-btn>
+                        </v-container>
+                    </v-card>
                 </v-flex>
             </v-layout>
-            <v-btn
-                    @click="submitFile"
-                    color="success"
-            >
-                Submit
-            </v-btn>
         </v-container>
+
         <v-footer class="pa-3" >
             <v-spacer></v-spacer>
             <div>&copy; {{ new Date().getFullYear() }}</div>
