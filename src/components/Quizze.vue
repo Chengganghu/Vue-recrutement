@@ -109,6 +109,7 @@
                                                         label="Réponse standard"
                                                         auto-grow
                                                         clearable
+                                                        v-model="answerDes"
                                                 ></v-textarea>
                                             </v-flex>
                                         </v-layout>
@@ -179,7 +180,7 @@
                                     </v-container>
                                     <v-container>
                                         <v-layout>
-                                            <v-btn>
+                                            <v-btn @click="submit">
                                                 submit
                                             </v-btn>
                                         </v-layout>
@@ -196,6 +197,7 @@
                     <h1>
                         liste des questions
                     </h1>
+                    <inscription></inscription>
                 </v-tab-item>
                 <v-tab-item
                         :key="3"
@@ -204,6 +206,7 @@
                     <h1>
                         générer le quizze
                     </h1>
+                    <Login></Login>
                     <h2>
                         this is a tltle
                     </h2>
@@ -214,15 +217,19 @@
 </template>
 
 <script>
+    import axios from 'axios';
+    import Inscription from "./Inscription";
+    import Login from "./Login";
     export default {
         name: "Quizze",
+        components: {Login, Inscription},
         data () {
             return {
                 tabs:null,
                 states: [
                     'Questions Uniques', 'Questions Multiples', 'Questions Ouvertes'
                 ],
-                type:'Questions Ouvertes',
+                type:null,
                 bonneOptionsNumber:1,
                 mauvaisOptionsNumber:1,
                 bonneOptions:[],
@@ -233,7 +240,8 @@
                     'Vue',
                     'Angular',
                     'Linux'
-                ]
+                ],
+                answerDes:null
             }
         },
         methods:{
@@ -252,6 +260,30 @@
                 if(this.mauvaisOptionsNumber <=1)
                     alert("Au moins d'une")
                 else this.mauvaisOptionsNumber--
+            },
+            submit(){
+                axios.post("http://localhost:8090/jersey/question/restful",
+                    {
+                        "taglist": [
+                            {
+                                "name": "test1"
+                            },
+                            {
+                                "name": "essai"
+                            }
+                        ],
+                        "questionType": "MULTIPLE",
+                        "description": "this is a test",
+                        "uverteanswer": {
+                            "answerDes":"je suis chengganghu"
+                        }
+                    },
+                    // {
+                    //     headers:{
+                    //         Authorization:"Token eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjaHUifQ.qcBqvAVrmKqQBpftM-KDOMxcKbGXsC93KUIFqs4E65M",
+                    //     }
+                    // }
+                )
             }
 
         },

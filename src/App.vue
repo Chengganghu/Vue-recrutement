@@ -38,6 +38,9 @@ export default {
   data () {
     return {
     }
+  },
+  created() {
+    document.title = "Bloom Recrutement"
   }
 }
 </script>
