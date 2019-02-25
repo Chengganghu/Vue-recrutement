@@ -262,20 +262,29 @@
                 else this.mauvaisOptionsNumber--
             },
             submit(){
-                axios.post("http://localhost:8090/jersey/question/restful",
+                let taglist = ''
+                this.select.forEach(function (element){
+                    taglist = taglist + '{"name": "'+element+'"},'
+                })
+                axios.post("http://localhost:8090/jersey/question/questions",
                     {
                         "taglist": [
-                            {
-                                "name": "test1"
-                            },
-                            {
-                                "name": "essai"
-                            }
+                            taglist
                         ],
                         "questionType": "MULTIPLE",
                         "description": "this is a test",
-                        "uverteanswer": {
-                            "answerDes":"je suis chengganghu"
+                        "choixAnswer": {
+                            "choixList": [
+                                {
+                                    "rightAns": false,
+                                    "description": 'choix answer',
+                                },
+                                {
+                                    "rightAns":true,
+                                    "description": 'choix answer2'
+                                }
+
+                            ]
                         }
                     },
                     // {
