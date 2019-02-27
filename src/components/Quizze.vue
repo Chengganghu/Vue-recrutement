@@ -118,7 +118,7 @@
                                         </v-layout>
                                     </v-container >
                                     <v-container v-if="isUnique">
-                                        <v-layout >
+                                        <v-layout v-for="n in bonneOptionsNumber">
                                             <v-flex xs10>
                                                 <v-text-field
                                                         clearable
@@ -272,9 +272,9 @@
             },
             submit(){
                 let data = new Object()
-                data.tagList=[]
+                data.taglist=[]
                 for(let i=0; i<this.select.length; i++){
-                    data.tagList.push({name:this.select[i]})
+                    data.taglist.push({name:this.select[i]})
                 }
                 if(this.question_type == "Questions Uniques")
                     data.questionTypt = "UNIQUE"
@@ -283,17 +283,20 @@
                 else data.questionType = "OUVERTE"
 
                 data.description = this.ques_description
-                data.choixList=[]
+                let tmpList=[]
                 let bonne_ops = this.$refs.bonne_option
                 let mauvais_ops = this.$refs.mauvais_option
                 for(let i=0;i<this.bonneOptionsNumber;i++){
                     this.bonneOptions.push(bonne_ops[i].lazyValue)
-                    data.choixList.push({rightAns:true,description:bonne_ops[i].lazyValue})
+                    tmpList.push({rightAns:true,description:bonne_ops[i].lazyValue})
                 }
                 for(let i=0;i<this.mauvaisOptionsNumber;i++){
                     this.mauvaisOptions.push(mauvais_ops[i].lazyValue)
-                    data.choixList.push({rightAns:false,description:mauvais_ops[i].lazyValue})
+                    tmpList.push({rightAns:false,description:mauvais_ops[i].lazyValue})
                 }
+                data.choixAnswer = new Object()
+                data.choixAnswer.choixList = tmpList
+
 
                 axios.post("http://localhost:8090/jersey/question/questions",data
                     // {
@@ -301,7 +304,6 @@
                     //         Authorization:"Token eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjaHUifQ.qcBqvAVrmKqQBpftM-KDOMxcKbGXsC93KUIFqs4E65M",
                     //     }
                     // }
-                )
             }
 
         },
