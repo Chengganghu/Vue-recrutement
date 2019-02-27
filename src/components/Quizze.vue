@@ -56,6 +56,7 @@
                                                         label="Type de Questions"
                                                         prepend-icon="help"
                                                         @change="logger"
+                                                        v-model="question_type"
                                                 ></v-select>
                                             </v-flex>
                                         </v-layout>
@@ -68,6 +69,7 @@
                                                         label="Choisir le tag pour cette question"
                                                         multiple
                                                         chips
+
                                                 >
                                                     <template
                                                             slot="selection"
@@ -98,6 +100,7 @@
                                                         label="Description de la Question"
                                                         auto-grow
                                                         clearable
+                                                        v-model="ques_description"
                                                 ></v-textarea>
                                             </v-flex>
                                         </v-layout>
@@ -120,6 +123,7 @@
                                                 <v-text-field
                                                         clearable
                                                         label= "Bonne Option"
+                                                        ref="bonne_option"
                                                 >
                                                 </v-text-field>
                                             </v-flex>
@@ -137,6 +141,7 @@
                                                 <v-text-field
                                                         clearable
                                                         label= "Mauvais Option"
+                                                        ref="mauvais_option"
                                                 >
                                                 </v-text-field>
                                             </v-flex>
@@ -156,6 +161,7 @@
                                                 <v-text-field
                                                         clearable
                                                         label= "Bonne Option"
+                                                        ref="bonne_option"
                                                 >
                                                 </v-text-field>
                                             </v-flex>
@@ -173,6 +179,7 @@
                                                 <v-text-field
                                                         clearable
                                                         label= "Mauvais Option"
+                                                        ref="mauvais_option"
                                                 >
                                                 </v-text-field>
                                             </v-flex>
@@ -241,7 +248,9 @@
                     'Angular',
                     'Linux'
                 ],
-                answerDes:null
+                answerDes:null,
+                question_type:'',
+                ques_description:''
             }
         },
         methods:{
@@ -262,31 +271,31 @@
                 else this.mauvaisOptionsNumber--
             },
             submit(){
-                let taglist = ''
-                this.select.forEach(function (element){
-                    taglist = taglist + '{"name": "'+element+'"},'
-                })
-                axios.post("http://localhost:8090/jersey/question/questions",
-                    {
-                        "taglist": [
-                            taglist
-                        ],
-                        "questionType": "MULTIPLE",
-                        "description": "this is a test",
-                        "choixAnswer": {
-                            "choixList": [
-                                {
-                                    "rightAns": false,
-                                    "description": 'choix answer',
-                                },
-                                {
-                                    "rightAns":true,
-                                    "description": 'choix answer2'
-                                }
+                let data = new Object()
+                data.tagList=[]
+                for(let i=0; i<this.select.length; i++){
+                    data.tagList.push({name:this.select[i]})
+                }
+                if(this.question_type == "Questions Uniques")
+                    data.questionTypt = "UNIQUE"
+                else if(this.question_type == "Questions Multiples")
+                    data.questionType = "MULTIPLE"
+                else data.questionType = "OUVERTE"
 
-                            ]
-                        }
-                    },
+                data.description = this.ques_description
+                data.choixList=[]
+                let bonne_ops = this.$refs.bonne_option
+                let mauvais_ops = this.$refs.mauvais_option
+                for(let i=0;i<this.bonneOptionsNumber;i++){
+                    this.bonneOptions.push(bonne_ops[i].lazyValue)
+                    data.choixList.push({rightAns:true,description:bonne_ops[i].lazyValue})
+                }
+                for(let i=0;i<this.mauvaisOptionsNumber;i++){
+                    this.mauvaisOptions.push(mauvais_ops[i].lazyValue)
+                    data.choixList.push({rightAns:false,description:mauvais_ops[i].lazyValue})
+                }
+
+                axios.post("http://localhost:8090/jersey/question/questions",data
                     // {
                     //     headers:{
                     //         Authorization:"Token eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjaHUifQ.qcBqvAVrmKqQBpftM-KDOMxcKbGXsC93KUIFqs4E65M",

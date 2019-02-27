@@ -50,7 +50,7 @@ router.beforeEach((to,from,next)=>{
     const authRequired = !publicPages.includes(to.path);  //check if auth is needed
     const loggedIn = localStorage.getItem('user-token');
     if (authRequired && !loggedIn) {
-        return next('/');
+        return next();
     }
     next();
 })
