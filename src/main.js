@@ -9,11 +9,12 @@ import Inscription from "./components/Inscription";
 import '@mdi/font/css/materialdesignicons.css'
 import Vuex from "vuex";
 import VueRouter from "vue-router";
-import AddQuestion from "./components/AddQuestion";
+import AddQuestion from "./components/quizze/AddQuestion";
 import Quizze from "./components/Quizze";
 import UniqueQuestion from "./components/question/UniqueQuestion";
 import MultipleQuestion from "./components/question/MultipleQuestion";
 import OuverteQuestion from "./components/question/OuverteQuestion";
+import ListeQuestion from "./components/quizze/ListeQuestion";
 
 Vue.config.productionTip = false
 
@@ -34,6 +35,7 @@ const routes = [
             {path: 'ouverte',component:OuverteQuestion}
         ]
     },
+    {path: '/liste', component:ListeQuestion},
     {path: '*', redirect:'/'}
 ];
 

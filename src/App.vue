@@ -11,7 +11,7 @@ import HelloWorld from './components/HelloWorld.vue'
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Inscription from "./components/Inscription";
-import AddQuestion from "./components/AddQuestion";
+import AddQuestion from "./components/quizze/AddQuestion";
 import VHeader from "./components/VHeader";
 import Quizze from "./components/Quizze";
 import UniqueQuestion from "./components/question/UniqueQuestion";
@@ -30,7 +30,7 @@ export default {
     Quizze,
     MultipleQuestion,
     OuverteQuestion,
-    UniqueQuestion
+    UniqueQuestion,
   },
   methods:{
 
